@@ -65,7 +65,7 @@ class Crawler:
         self.t1 = None
         self.client = ZhihuClient()
         self.headers = {}
-        self.client.auth(self)
+        self.client.auth(self)  # [@Stephen] 调用auth的__call__,把headers传递给本对象，存入self.headers，为爬虫进行auth
         self._session = None
         self.__stopped = {}.fromkeys(['ended', 'ongoing', 'posts'], False)
 
