@@ -90,13 +90,17 @@ class ZhihuClient:
         self.token_file = token_file
 
         if os.path.exists(token_file):
+            print('Token already exists')
             self._token = ZhihuToken.from_file(token_file)
         else:
             print('----- Zhihu OAuth Login -----')
             username = input('Username: ')
             password = getpass.getpass('Password: ')
             self.login(username, password)
+        print(self._token)
         self.auth = ZhihuOAuth(self._token)
+        self._session.auth = self.auth
+
 
     def save_token(self, auth, data):
         res = self._session.post(LOGIN_URL, auth=auth, data=data)
@@ -137,7 +141,7 @@ class ZhihuClient:
                     raise LoginException(json_dict['error']['message'])
             except (ValueError, KeyError) as e:
                 raise LoginException('Maybe input wrong captcha value')
-
+        
         self.save_token(self._login_auth, data)
 
     def need_captcha(self):
@@ -158,3 +162,5 @@ class ZhihuClient:
 
 if __name__ == '__main__':
     client = ZhihuClient()
+    r = client._session.get('https://www.zhihu.com/explore')
+    #print(r.text)
